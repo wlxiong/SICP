@@ -1,24 +1,27 @@
-; fast-prime?
+; Miller-Rabin test
 
-(define (square x) (* x x))
-
-(define (expmod base exp m)
-  (cond ((= exp 0) 1)
-        ((even? exp)
-         (remainder (square (expmod base (/ exp 2) m))
-                    m))
+(define (expmod a n m)
+  (cond ((= n 0)
+          1)
+        ((even? n)
+          (let ((expm (expmod a (/ n 2) m)))
+               (let ((rem (remainder (square expm) m)))
+                    (if (and (not (= expm 1)) (not (= expm (- m 1))) (= rem 1))
+                     0
+                     rem))))
         (else
-         (remainder (* base (expmod base (- exp 1) m))
-                    m))))        
+          (remainder (* a (expmod a (- n 1) m)) m))))
 
-(define (fermat-test n)
-  (define (try-it a)
-    (= (expmod a n n) a))
-  (try-it (+ 1 (random (- n 1)))))
+(define (miller-rabin-test n)
+  (let ((rand (+ 1 (random (- n 1)))))
+       (let ((expm (expmod rand (- n 1) n)))
+            (if (= expm 1)
+              true
+              false))))
 
 (define (fast-prime? n times)
   (cond ((= times 0) true)
-        ((fermat-test n) (fast-prime? n (- times 1)))
+        ((miller-rabin-test n) (fast-prime? n (- times 1)))
         (else false)))
 
 ; timed-prime-test
@@ -37,8 +40,6 @@
   (newline)
   (display n)
   (start-prime-test n (runtime)))
-
-(define (even? x) (= (remainder x 2) 0))
 
 (define (search-for-primes n)
   (define (try-prime x)
@@ -73,11 +74,11 @@
 ; 1009 *** 1.0000000000000009e-2
 ; 10007 *** 1.9999999999999962e-2
 ; 100003 *** 2.0000000000000018e-2
-; 1000003 *** 1.9999999999999962e-2
-; 10000019 *** 2.0000000000000018e-2
+; 1000003 *** 3.0000000000000027e-2
+; 10000019 *** 3.0000000000000027e-2
 ; 100000007 *** 3.0000000000000027e-2
-; 1000000007 *** 3.0000000000000027e-2
-; 10000000019 *** 3.9999999999999925e-2
+; 1000000007 *** 3.9999999999999925e-2
+; 10000000019 *** 4.0000000000000036e-2
 ; 100000000003 *** 4.0000000000000036e-2
 ; 1000000000039 *** 5.0000000000000044e-2
-; 10000000000037 *** 4.0000000000000036e-2
+; 10000000000037 *** 5.0000000000000044e-2
