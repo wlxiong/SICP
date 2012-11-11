@@ -1,0 +1,28 @@
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (remainder (* (expmod base (/ exp 2) m)
+                       (expmod base (/ exp 2) m))
+                    m))
+        (else
+         (remainder (* base (expmod base (- exp 1) m))
+                    m))))
+
+(define (carmichael? n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (define (test-iter i)
+    (cond ((= i 0) true)
+          ((try-it i) (test-iter (- i 1)))
+          (else false)))
+  (test-iter (- n 1)))
+
+(carmichael? 561)
+(carmichael? 1105)
+(carmichael? 1729)
+(carmichael? 2465)
+(carmichael? 2821)
+(carmichael? 6601)
+
+(carmichael? 1009)
+(carmichael? 1103)
