@@ -1,7 +1,7 @@
 (define (sum term a next b)
   (if (> a b)
       0
-      (+ (term a) (sum term (+ a 1) next b))))
+      (+ (term a) (sum term (next a) next b))))
 
 (define (const i n)
   (cond ((= i 0) 1)

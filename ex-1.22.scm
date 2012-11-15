@@ -12,7 +12,9 @@
   (find-divisor n 2))
 
 (define (prime? n)
-  (= n (smallest-divisor n)))
+  (if (= n 1)
+      false
+      (= n (smallest-divisor n))))
 
 (define (report-prime elapsed-time)
   (display " *** ")
