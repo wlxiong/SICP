@@ -3,6 +3,11 @@
       1.0
       (* (term a) (product term (next a) next b))))
 
+(define (product-iter term a next b)
+  (define (iter i result)
+    (if (> i b)
+        result
+        (iter (next i) (* (term a) result)))))
 
 (define (factorial n)
   (define (identity x) x)

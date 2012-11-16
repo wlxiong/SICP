@@ -3,6 +3,12 @@
       null-value
       (combiner (term a) (accumulate combiner null-value term (next a) next b))))
 
+(define (accumulate-iter combiner null-value term a next b)
+  (define (iter i result)
+    (if (> i b)
+        result
+        (iter (next i) (combiner (term a) result)))))
+
 (define (sum term a next b)
   (accumulate + 0 term a next b))
 
